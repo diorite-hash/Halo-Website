@@ -1,171 +1,288 @@
-<html><head>
-  <style>body,html,iframe{margin:0;padding:0;height:100%;width:100%;overflow:hidden}.forceIosScrolling{overflow:scroll;-webkit-overflow-scrolling:touch}</style>
-<script src="https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.etOqPKhAhvg.O/m=gapi_rpc/rt=j/sv=1/d=1/ed=1/rs=AHpOoo-l5JrVgGKVELwC844E6riBHX86-w/cb=gapi.loaded_0?le=scs,fedcm_migration_mod" async=""></script><script src="https://apis.google.com/js/api.js?checkCookie=1" gapi_processed="true"></script></head>
+<html lang="en-us"><head></head><body><module>
+<content type="html"><!--[CDATA[
 
-<body>
-<iframe id="innerFrame" name="innerFrame" sandbox="allow-scripts allow-popups allow-forms allow-same-origin allow-popups-to-escape-sandbox allow-downloads allow-storage-access-by-user-activation" frameborder="0" allowfullscreen="" src="https://1996399237-atari-embeds.googleusercontent.com/embeds/4c8a3211fd76886a93ab92bca3a50520/inner-frame-minified.html?jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.etOqPKhAhvg.O%2Fd%3D1%2Frs%3DAHpOoo-l5JrVgGKVELwC844E6riBHX86-w%2Fm%3D__features__" style="overflow: auto;">
-</iframe>
+
+<!DOCTYPE html-->
+
+  
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #000;
+      }
+      #unity-canvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #000;
+        display: block;
+      }
+      #loading-screen {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: white;
+        font-family: Arial, sans-serif;
+        font-size: 18px;
+        z-index: 10;
+      }
+      #loading-text { margin-bottom: 15px; }
+      #progress-container {
+        width: 40%;
+        height: 10px;
+        background: #222;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      #progress-bar {
+        height: 100%;
+        width: 0%;
+        background: #09f;
+        transition: width 0.2s linear;
+      }
+    </style>
+  
+  
+    <div id="loading-screen" style="display: none;">
+      <div id="loading-text">Loading...</div>
+      <div id="progress-container">
+        <div id="progress-bar" style="width: 100%;"></div>
+      </div>
+    </div>
+
+    <canvas id="unity-canvas" width="571" height="363" style="cursor: default;"></canvas>
+
+    <!-- Loader CDN -->
+    <script src="https://cdn.jsdelivr.net/gh/kelsimsk/ugil@main/Build/ultrakill.loader.js"></script>
+
+    <script>
+      // 🔹 Mobil görünüm optimizasyonu
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        const meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+      }
+
+      const loadingScreen = document.getElementById("loading-screen");
+      const progressBar = document.getElementById("progress-bar");
+      const loadingText = document.getElementById("loading-text");
+
+      // 🔹 Parçaları CDN'den birleştirme
+      async function mergeParts(baseName, totalParts, progressWeight) {
+        const parts = [];
+        for (let i = 0; i < totalParts; i++) {
+          const url = `https://cdn.jsdelivr.net/gh/kelsimsk/ugil@main/Build/${baseName}.part${i}`;
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`Part ${i} yüklenemedi: ${url}`);
+          const buf = await res.arrayBuffer();
+          parts.push(buf);
+
+          // Dosya yükleme ilerlemesi
+          const percent = ((i + 1) / totalParts) * progressWeight;
+          progressBar.style.width = percent + "%";
+        }
+        const blob = new Blob(parts, { type: "application/octet-stream" });
+        return URL.createObjectURL(blob);
+      }
+
+      (async () => {
+        // 🔹 Parça sayıları (örnek)
+        const dataParts = 4;
+        const wasmParts = 3;
+
+        try {
+          // 80% birleşme, 20% Unity load
+          const dataUrl = await mergeParts("ultrakill.data.unityweb", dataParts, 40);
+          const wasmUrl = await mergeParts("ultrakill.wasm.unityweb", wasmParts, 80);
+
+          createUnityInstance(document.querySelector("#unity-canvas"), {
+            dataUrl: dataUrl,
+            frameworkUrl: "https://cdn.jsdelivr.net/gh/kelsimsk/ugil@main/Build/ultrakill.framework.js.unityweb",
+            codeUrl: wasmUrl,
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "Hakita",
+            productName: "ULTRAKILL WEB PORT",
+            productVersion: "1.5",
+          }, (progress) => {
+            const percent = 80 + progress * 20;
+            progressBar.style.width = percent + "%";
+          }).then(() => {
+            loadingScreen.style.display = "none";
+          }).catch((err) => {
+            loadingText.textContent = "Error loading game: " + err;
+            loadingText.style.color = "red";
+          });
+        } catch (e) {
+          loadingText.textContent = "CDN Error: " + e.message;
+          loadingText.style.color = "red";
+        }
+      })();
+    </script>
+    
+   <!-- Sticky Bottom Center Ad (728x90) with Smooth Slide-Out and Reappearance -->
+<style>
+  /* Container: Bottom center, fixed, with overflow hidden */
+  #ad-container {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(728px, calc(100% - 20px)); /* 728px, 10px margin on mobile */
+    height: 90px;
+    background: rgba(0, 0, 0, 0.90);
+    display: none;
+    z-index: 99999;
+    border-radius: 0; /* Sharp corners */
+    overflow: hidden;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.45);
+    box-sizing: border-box;
+    transition: transform 0.5s ease-in-out; /* Smooth slide-in/out animation */
+  }
+
+  /* Slide-out animation */
+  #ad-container.hidden {
+    transform: translate(-50%, 100%); /* Slide down out of view */
+  }
+
+  #ad-iframe {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 745px; /* Updated width */
+    height: 90px; /* Updated height */
+    border: 0;
+    display: block;
+    overflow: hidden;
+    pointer-events: auto;
+    box-sizing: content-box;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  #ad-iframe::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  /* Close button with arrow */
+  #close-ad {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: #ff4d4d;
+    color: #fff;
+    border: none;
+    padding: 5px 9px;
+    font-size: 13px;
+    border-radius: 4px;
+    cursor: not-allowed;
+    opacity: 0.72;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+  }
+  #close-ad.enabled {
+    cursor: pointer;
+    opacity: 1;
+  }
+  #close-ad::before {
+    content: '↓'; /* Down arrow for bottom ad */
+    margin-right: 4px;
+  }
+
+  /* Right mask for scrollbar */
+  #ad-right-mask {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 12px;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9));
+    z-index: 99999;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 440px) {
+    #ad-container {
+      width: calc(100% - 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 0; /* Sharp corners on mobile */
+    }
+    #ad-iframe {
+      width: 728px;
+    }
+  }
+</style>
 
 <script>
-  let policy;
-  if (window.trustedTypes && window.trustedTypes.createPolicy) {
-    policy = window.trustedTypes.createPolicy('atari-gapi-loader', {
-      createScriptURL: (url) => {
-        if (url === 'https://apis.google.com/js/api.js?checkCookie=1') {
-          return url;
-        }
-        throw new Error('Attempted to load unexpected script URL');
-      }
-    });
-  }
+  (function () {
+    const showDelay = 2000; // 2 seconds delay before first show
+    const countdownStart = 12; // 12 seconds countdown
+    const reappearDelay = 150000; // 25 seconds before reappearance
+    const adContainer = document.getElementById('ad-container');
+    const closeBtn = document.getElementById('close-ad');
 
-  function loadGapi() {
-    var loaderScript = document.createElement('script');
-    var url = 'https://apis.google.com/js/api.js?checkCookie=1';
-    if (policy) {
-      loaderScript.src = policy.createScriptURL(url);
-    } else {
-      loaderScript.setAttribute('src', url);
-    }
-    loaderScript.onload = function() {
-      this.onload = function() {};
-      loadGapiClient();
-    };
-    loaderScript.onreadystatechange = function() {
-      if (this.readyState === 'complete') {
-        this.onload();
-      }
-    };
-    (document.head || document.body || document.documentElement).appendChild(loaderScript);
-  }
+    function showAd() {
+      // Show ad with smooth slide-in
+      adContainer.style.display = 'block';
+      adContainer.classList.remove('hidden');
+      adContainer.setAttribute('aria-hidden', 'false');
 
-  function updateInnerFrame(url, enableInteraction, forceIosScrolling) {
-    var urlEl = document.createElement('a');
-    urlEl.setAttribute('href', url);
-    if (urlEl.protocol != "https:" && urlEl.protocol != "http:") {
-      // Do not allow updating the iframe's src to anything other than https or http (used for local
-      // servers), specifically javascript:
-      return;
-    }
-    var iframe = document.getElementById('innerFrame');
-    iframe.src = url;
-    iframe.onload = function() {
-      gapi.rpc.call('..', 'innerFrameLoaded');
-    };
+      // Start countdown
+      let timeLeft = countdownStart;
+      closeBtn.textContent = `Close (${timeLeft})`;
+      closeBtn.disabled = true;
+      closeBtn.classList.remove('enabled');
 
-    if (enableInteraction) {
-      if (forceIosScrolling) {
-        var iframeParent = iframe.parentElement;
-        iframeParent.classList.add('forceIosScrolling');
-      } else {
-        iframe.style.overflow = 'auto';
-      }
-    } else {
-      iframe.style.pointerEvents = 'none';
-    }
-  }
-
-  function updateInnerIframeCode(userCode, enableInteraction, forceIosScrolling, enableHtmlSitesGenAi, isLiquidArtifact = false, inEditor = false, enableLiquidAppsVerticalScrolling = false, isFullPageEmbed = false, isInteractiveFullPageEmbed = false, textEditLabels = null, enableLiquidAppsObjectSegmentation = false) {
-    if (((enableHtmlSitesGenAi && isLiquidArtifact) || isInteractiveFullPageEmbed) && enableInteraction) {
-      var innerFrame = document.getElementById('innerFrame');
-      if (innerFrame) {
-        innerFrame.style.pointerEvents = 'auto';
-        if (enableLiquidAppsVerticalScrolling) {
-          // The frame grows to fit its content, so only horizontal overflow
-          // can scroll.
-          innerFrame.style.overflowX = 'auto';
-          innerFrame.style.overflowY = 'hidden';
-          innerFrame.setAttribute('scrolling', 'no');
+      const t = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          closeBtn.textContent = `Close (${timeLeft})`;
         } else {
-          innerFrame.setAttribute('scrolling', 'auto');
+          clearInterval(t);
+          closeBtn.disabled = false;
+          closeBtn.classList.add('enabled');
+          closeBtn.textContent = 'Close ↓';
         }
-      }
+      }, 1000);
     }
-    gapi.rpc.setup('innerFrame');
-    gapi.rpc.call(
-      'innerFrame',
-      'updateUserHtmlFrame',
-      undefined /* opt_callback */,
-      userCode,
-      enableInteraction,
-      forceIosScrolling,
-      enableHtmlSitesGenAi,
-      isLiquidArtifact,
-      inEditor,
-      enableLiquidAppsVerticalScrolling,
-      isFullPageEmbed,
-      isInteractiveFullPageEmbed,
-      textEditLabels,
-      enableLiquidAppsObjectSegmentation);
-  }
 
-  /** Turns selecting elements in the user's page on or off. */
-  function setObjectSegmentationEnabled(enabled) {
-    gapi.rpc.setup('innerFrame');
-    gapi.rpc.call(
-      'innerFrame',
-      'setObjectSegmentationEnabled',
-      undefined /* callback */,
-      enabled);
-  }
+    // Initial ad show
+    setTimeout(showAd, showDelay);
 
-  const MessageAction = {
-    BACKGROUND_COLOR: 'ATARI_CODE_EMBED_BACKGROUND_COLOR',
-    GENAI_TEXT_EDIT: 'ATARI_GENAI_TEXT_EDIT',
-    GENAI_TEXT_FORMAT: 'ATARI_GENAI_TEXT_FORMAT',
-    JS_CRASH: 'onJsCrash',
-    REDO: 'ATARI_CODE_EMBED_REDO',
-    RESIZE: 'ATARI_CODE_EMBED_RESIZE',
-    UNDO: 'ATARI_CODE_EMBED_UNDO'
-  };
-
-  function onPostMessage(ev) {
-    var innerFrame = document.getElementById('innerFrame');
-    var type = ev.data && ev.data['type'];
-    if (ev.data['magic'] != 'SHIC' && (type != MessageAction.GENAI_TEXT_EDIT && type != MessageAction.GENAI_TEXT_FORMAT && type != MessageAction.JS_CRASH && type != MessageAction.RESIZE && type != MessageAction.BACKGROUND_COLOR && type != MessageAction.UNDO && type != MessageAction.REDO || !innerFrame || ev.source !== innerFrame.contentWindow)) {
-      return;
-    }
-    switch (type) {
-      case 'resize':
-        var height = ev.data['height'];
-        gapi.rpc.call('..', 'resize', undefined /* opt_callback */, height);
-        break;
-      case MessageAction.GENAI_TEXT_EDIT:
-      case MessageAction.GENAI_TEXT_FORMAT:
-      case MessageAction.RESIZE:
-      case MessageAction.BACKGROUND_COLOR:
-      case MessageAction.UNDO:
-      case MessageAction.REDO:
-        window.parent.postMessage(ev.data, '*');
-        break;
-      case MessageAction.JS_CRASH:
-        gapi.rpc.call('..', 'onJsCrash', undefined /* opt_callback */, {
-          message: ev.data['message'],
-          stack: ev.data['stack']
-        });
-        break;
-    }
-  }
-
-  function onGapiInitialized() {
-    // Inform the parent frame that GAPI has been initialized.
-    gapi.rpc.call('..', 'gapiInitialized');
-    gapi.rpc.register('updateInnerFrame', updateInnerFrame);
-    gapi.rpc.register('updateInnerIframeCode', updateInnerIframeCode);
-    gapi.rpc.register('setObjectSegmentationEnabled', setObjectSegmentationEnabled);
-    window.addEventListener('message', onPostMessage);
-  }
-
-  function loadGapiClient() {
-    gapi.load('gapi.rpc', onGapiInitialized);
-  }
-
-  if (document.readyState == 'complete') {
-    loadGapi();
-  } else {
-    self.addEventListener('load', loadGapi);
-  }
+    // Close with animation and schedule reappearance
+    closeBtn.addEventListener('click', () => {
+      if (closeBtn.disabled) return;
+      adContainer.classList.add('hidden');
+      adContainer.setAttribute('aria-hidden', 'true');
+      // Schedule reappearance without removing or reloading iframe
+      setTimeout(showAd, reappearDelay);
+    });
+  })();
 </script>
 
+  
 
-</body></html>
+
+
+
+]]&gt;</content>
+</module><script src="blob:https://1996399237-atari-embeds.googleusercontent.com/052d9644-ccf3-4564-a300-6e4ce806040c"></script></body></html>
