@@ -127,10 +127,10 @@ input:focus {
 button {
     width: 100%;
     padding: 16px;
-    border: 1px solid var(--glass-border);
+    border: 2px solid var(--glass-border);
     border-radius: 24px;
     /* Semi-transparent tint (avoid using the 'opacity' property) */
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.484);
     /* Combines blur, brightness boost, and SVG edge refraction */
     backdrop-filter: blur(12px) brightness(1.1) url(#liquid-refraction);
     -webkit-backdrop-filter: blur(12px) brightness(1.1);
