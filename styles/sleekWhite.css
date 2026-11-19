@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700&display=swap');
 
 :root {
-    --accent: rgba(255, 255, 255, 0.15);
+    --accent: rgba(255, 255, 255, 0.753);
     --accent-glow: rgba(222, 222, 222, 0.5);
     --bg-dark: #08090a;
     --glass: rgba(255, 255, 255, 0.03);
@@ -127,8 +127,8 @@ input:focus {
 button {
     width: 100%;
     padding: 16px;
-    border: none;
-    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
