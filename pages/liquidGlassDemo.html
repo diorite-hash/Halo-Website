@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #ff6b6b, #5f27cd, #48dbfb);
+      font-family: system-ui, sans-serif;
+    }
+
+    /* Liquid Glass Container */
+    .liquid-glass {
+      position: relative;
+      width: 320px;
+      padding: 2rem;
+      border-radius: 28px;
+      color: #ffffff;
+      /* Semi-transparent tint (avoid using the 'opacity' property) */
+      background: rgba(255, 255, 255, 0.15);
+      /* Combines blur, brightness boost, and SVG edge refraction */
+      backdrop-filter: blur(12px) brightness(1.1) url(#liquid-refraction);
+      -webkit-backdrop-filter: blur(12px) brightness(1.1);
+      /* Specular highlights & depth shadows */
+      box-shadow:
+        inset 1px 1px 1px rgba(255, 255, 255, 0.7),
+        inset -1px -1px 1px rgba(255, 255, 255, 0.35),
+        inset 0 4px 12px rgba(255, 255, 255, 0.25),
+        0 12px 32px rgba(0, 0, 0, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden SVG Filter for Fluid Refraction -->
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+      <filter id="liquid-refraction">
+        <feTurbulence 
+          type="fractalNoise" 
+          baseFrequency="0.015" 
+          numOctaves="2" 
+          seed="3" 
+          result="noise" 
+        />
+        <feGaussianBlur in="noise" stdDeviation="3" result="softNoise" />
+        <feDisplacementMap 
+          in="SourceGraphic" 
+          in2="softNoise" 
+          scale="28" 
+          xChannelSelector="R" 
+          yChannelSelector="G" 
+        />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="liquid-glass">
+    <h2>Liquid Glass</h2>
+    <p>Refractive translucency built with CSS and SVG displacement filters.</p>
+  </div>
+
+</body>
+</html>
