@@ -128,7 +128,6 @@ button {
     width: 100%;
     padding: 16px;
     background: var(--accent);
-    color: #000;
     border: none;
     border-radius: 12px;
     font-weight: 700;
@@ -137,6 +136,14 @@ button {
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-top: 10px;
+    color: #ffffff;
+    /* Semi-transparent tint (avoid using the 'opacity' property) */
+    background: rgba(255, 255, 255, 0.15);
+    /* Combines blur, brightness boost, and SVG edge refraction */
+    backdrop-filter: blur(12px) brightness(1.1) url(#liquid-refraction);
+    -webkit-backdrop-filter: blur(12px) brightness(1.1);
+    /* Specular highlights & depth shadows */
+    box-shadow:
 }
 button:hover {
     transform: translateY(-2px);
