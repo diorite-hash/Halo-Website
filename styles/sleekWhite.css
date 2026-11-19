@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700&display=swap');
 
 :root {
-    --accent: #e9e8ea;
+    --accent: #e9e8eacc;
     --accent-glow: rgba(222, 222, 222, 0.5);
     --bg-dark: #08090a;
     --glass: rgba(255, 255, 255, 0.03);
