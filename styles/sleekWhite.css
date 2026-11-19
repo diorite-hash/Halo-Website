@@ -34,7 +34,7 @@ body {
 }
 
 .container {
-    background: var(--glass);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px) brightness(1.1) url(#liquid-refraction);
     -webkit-backdrop-filter: blur(12px) brightness(1.1);
     border: 1px solid var(--glass-border);
